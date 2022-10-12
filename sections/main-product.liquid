@@ -99,7 +99,7 @@
               {%- assign featured_media = product.selected_or_first_available_variant.featured_media -%}
               <li
                 id="Slide-{{ section.id }}-{{ featured_media.id }}"
-                class="product__media-item grid__item slider__slide is-active{% if single_media_visible %} product__media-item--single{% endif %}{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains featured_media.src %} product__media-item--variant{% endif %}"
+                class="select-invisible product__media-item grid__item slider__slide is-active{% if single_media_visible %} product__media-item--single{% endif %}{% if featured_media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains featured_media.src %} product__media-item--variant{% endif %}"
                 data-media-id="{{ section.id }}-{{ featured_media.id }}"
               >
                 {%- assign media_position = 1 -%}
@@ -110,7 +110,7 @@
               {%- unless media.id == product.selected_or_first_available_variant.featured_media.id -%}
                 <li
                   id="Slide-{{ section.id }}-{{ media.id }}"
-                  class="product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if product.selected_or_first_available_variant.featured_media == null and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains media.src %} product__media-item--variant{% endif %}"
+                  class="select-invisible product__media-item grid__item slider__slide{% if single_media_visible %} product__media-item--single{% endif %}{% if product.selected_or_first_available_variant.featured_media == null and forloop.index == 1 %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}{% if section.settings.hide_variants and variant_images contains media.src %} product__media-item--variant{% endif %}"
                   data-media-id="{{ section.id }}-{{ media.id }}"
                 >
                   {%- liquid
@@ -125,7 +125,7 @@
               {%- endunless -%}
             {%- endfor -%}
           </ul>
-          <div class="slider-buttons no-js-hidden quick-add-hidden{% if hide_mobile_slider %} small-hide{% endif %}">
+          {%- comment -%} <div class="slider-buttons no-js-hidden quick-add-hidden{% if hide_mobile_slider %} small-hide{% endif %}">
             <button
               type="button"
               class="slider-button slider-button--prev"
@@ -148,7 +148,7 @@
             >
               {% render 'icon-caret' %}
             </button>
-          </div>
+          </div> {%- endcomment -%}
         </slider-component>
         {%- if first_3d_model -%}
           <button
@@ -334,9 +334,16 @@
               </div>
             {%- when 'price' -%}
               <div class="no-js-hidden" id="price-{{ section.id }}" role="status" {{ block.shopify_attributes }}>
-                {%- render 'price', product: product, use_variant: true, show_badges: true, price_class: 'price--large' -%}
+                <div>
+                  <p class="your-price">
+                    <span>Your price:</span>
+                  </p>
+                </div>
+                <div class="price-and-shipping">
+                  {%- render 'price', product: product, use_variant: true, show_badges: true, price_class: 'price--large' -%} {% if product.selected_or_first_available_variant.available %} <h4 class="shipping-price">&nbsp;& Free Shipping</h4> {% endif %}
+                </div>
               </div>
-              {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+              {%- comment -%} {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
                 <div class="product__tax caption rte">
                   {%- if shop.taxes_included -%}
                     {{ 'products.product.include_taxes' | t }}
@@ -345,7 +352,7 @@
                     {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
                   {%- endif -%}
                 </div>
-              {%- endif -%}
+              {%- endif -%} {%- endcomment -%}
               <div {{ block.shopify_attributes }}>
                 {%- assign product_form_installment_id = 'product-form-installment-' | append: section.id -%}
                 {%- form 'product', product, id: product_form_installment_id, class: 'installment caption-large' -%}
@@ -358,6 +365,10 @@
                 <div class="product__description rte quick-add-hidden">
                   {{ product.description }}
                 </div>
+                <h3><span>⚡&nbsp;</span> Ultra-Fast Charging</h3>
+                <h3><span>⚡&nbsp;</span> Unique 90° Design</h3>
+                <h3><span>⚡&nbsp;</span> Lifetime Warranty</h3>
+                <h2 class="discount-info">50% OFF TODAY</h2>
               {%- endif -%}
             {%- when 'custom_liquid' -%}
               {{ block.settings.custom_liquid }}
@@ -384,9 +395,9 @@
                 class="product-form__input product-form__quantity{% if settings.inputs_shadow_vertical_offset != 0 and settings.inputs_shadow_vertical_offset < 0 %} product-form__quantity-top{% endif %}"
                 {{ block.shopify_attributes }}
               >
-                <label class="form__label" for="Quantity-{{ section.id }}">
+                {%- comment -%} <label class="form__label" for="Quantity-{{ section.id }}">
                   {{ 'products.product.quantity.label' | t }}
-                </label>
+                </label> {%- endcomment -%}
 
                 <quantity-input class="quantity">
                   <button class="quantity__button no-js-hidden" name="minus" type="button">
@@ -634,6 +645,9 @@
                           </svg>
                         </div>
                       </button>
+                      <div class="available-note">
+                        <h4><span>Note:&nbsp;</span>Not Available on Amazon or eBay</h4>
+                      </div>
                       {%- if block.settings.show_dynamic_checkout -%}
                         {{ form | payment_button }}
                       {%- endif -%}
@@ -669,43 +683,25 @@
               </div>
 
               <script src="{{ 'pickup-availability.js' | asset_url }}" defer="defer"></script>
-            {%- when 'rating' -%}
-              {%- if product.metafields.reviews.rating.value != blank -%}
-                {% liquid
-                  assign rating_decimal = 0
-                   assign decimal = product.metafields.reviews.rating.value.rating | modulo: 1
-                   if decimal >= 0.3 and decimal <= 0.7
-                    assign rating_decimal = 0.5
-                  elsif decimal > 0.7
-                    assign rating_decimal = 1
-                   endif
-                %}
-                <div
-                  class="rating"
-                  role="img"
-                  aria-label="{{ 'accessibility.star_reviews_info' | t: rating_value: product.metafields.reviews.rating.value, rating_max: product.metafields.reviews.rating.value.scale_max }}"
-                >
-                  <span
-                    aria-hidden="true"
-                    class="rating-star color-icon-{{ settings.accent_icons }}"
-                    style="--rating: {{ product.metafields.reviews.rating.value.rating | floor }}; --rating-max: {{ product.metafields.reviews.rating.value.scale_max }}; --rating-decimal: {{ rating_decimal }};"
-                  ></span>
+              {%- when 'rating' -%}
+                <div class="stars-container">
+                  {% assign rating = block.settings.rating_num | divided_by: 10.0  %}
+                   {% assign flr = block.settings.rating_num | divided_by: 10.0 | ceil %}
+                 
+                  <span class="stars">
+                  {% for i in (1..flr) %}
+                    ★
+                  {% endfor %}
+                  &nbsp;
+                  </span>
+                  <span class="numeric-reviews">
+                     {{rating}}
+                  </span>
+                  <a href="#">
+                    {% assign reviews = block.settings.num_reviews %}
+                    ({{ reviews }} Reviews)
+                  </a>
                 </div>
-                <p class="rating-text caption">
-                  <span aria-hidden="true">
-                    {{- product.metafields.reviews.rating.value }} /
-                    {{ product.metafields.reviews.rating.value.scale_max -}}
-                  </span>
-                </p>
-                <p class="rating-count caption">
-                  <span aria-hidden="true">({{ product.metafields.reviews.rating_count }})</span>
-                  <span class="visually-hidden">
-                    {{- product.metafields.reviews.rating_count }}
-                    {{ "accessibility.total_reviews" | t -}}
-                  </span>
-                </p>
-              {%- endif -%}
-
               {%- when 'complementary' -%}
                 <product-recommendations class="complementary-products quick-add-hidden no-js-hidden{% if block.settings.make_collapsible_row %} is-accordion{% endif %}" data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ block.settings.product_list_limit }}&intent=complementary">
                   {%- if recommendations.performed and recommendations.products_count > 0 -%}
@@ -1525,9 +1521,31 @@
       "name": "t:sections.main-product.blocks.rating.name",
       "limit": 1,
       "settings": [
+       {
+          "type": "range",
+          "id": "rating_num",
+          "min": 1,
+          "max": 50,
+          "step": 1,
+          "label": "Rating",
+          "default": 50
+        },
         {
-          "type": "paragraph",
-          "content": "t:sections.main-product.blocks.rating.settings.paragraph.content"
+          "type": "number",
+          "id": "num_reviews",
+          "label": "Number of reviews",
+          "default": 7812
+        }
+      ]
+    },
+    {
+      "type": "discount",
+      "name": "t:sections.main-product.blocks.discount.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "discount_text",
+          "label": "Discount"
         }
       ]
     },

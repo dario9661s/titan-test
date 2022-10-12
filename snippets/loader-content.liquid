@@ -1,0 +1,26 @@
+<div id="page_preloader__bg">
+    <div class="Titan_Svg_Wrap">{% include 'logo' %}</div>
+</div>
+<script>
+    (function (){
+        const preloaderBg = document.getElementById('page_preloader__bg');
+        let isShopLoaded = false;
+        window.addEventListener('load', () => isShopLoaded = !isShopLoaded);
+        const timeout = setTimeout(() => {
+            if(isShopLoaded){
+                preloaderBg.classList.add('off');
+                isShopLoaded = !isShopLoaded;
+                clearTimeout(timeout);
+            }else{
+                const interval = setInterval(() => {
+                    if(isShopLoaded){
+                        preloaderBg.classList.add('off');
+                        isShopLoaded = !isShopLoaded;
+                        clearInterval(interval);
+                        clearTimeout(timeout);
+                    }
+                }, 100)
+            }
+        }, 2000);
+    })()
+</script>

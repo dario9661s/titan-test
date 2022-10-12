@@ -554,7 +554,18 @@ blockquote {
   line-height: calc(1 + 0.5 / var(--font-body-scale));
   letter-spacing: 0.04rem;
 }
-
+.select select {
+  font-size: 1.3rem;
+  line-height: calc(1 + 0.5 / var(--font-body-scale));
+  letter-spacing: 0.04rem;
+  background-color: #131313;
+  width: 100%;
+  color: #efefef;
+  border-radius: 10px;
+  border: 0.75px solid #fff;
+  padding: 8px 24px 8px 8px;
+  outline: none !important;
+}
 .color-foreground {
   color: rgb(var(--color-foreground));
 }

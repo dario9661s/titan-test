@@ -45,7 +45,7 @@
 
 <noscript>
   {%- if media.media_type == 'video' or media.media_type == 'external_video' -%}
-    <span class="product__media-icon motion-reduce quick-add-hidden">{% render 'icon-play' %}</span>
+    {%- comment -%} <span class="product__media-icon motion-reduce quick-add-hidden">{% render 'icon-play' %}</span> {%- endcomment -%}
     <div class="product__media media gradient global-media-settings" style="padding-top: {{ 1 | divided_by: media.preview_image.aspect_ratio | times: 100 }}%;">
       {{ media.preview_image | image_url: width: 1946 | image_tag:
         loading: lazy,
@@ -70,7 +70,7 @@
 </noscript>
 
 <modal-opener class="product__modal-opener product__modal-opener--{{ media.media_type }} no-js-hidden" data-modal="#ProductModal-{{ modal_id }}">
-  <span class="product__media-icon motion-reduce quick-add-hidden" aria-hidden="true">
+  {%- comment -%} <span class="product__media-icon motion-reduce quick-add-hidden" aria-hidden="true">
     {%- liquid
       case media.media_type
       when 'video' or 'external_video'
@@ -81,7 +81,7 @@
         render 'icon-zoom'
       endcase
     -%}
-  </span>
+  </span> {%- endcomment -%}
 
   <div class="product__media media media--transparent gradient global-media-settings" style="padding-top: {{ 1 | divided_by: media.preview_image.aspect_ratio | times: 100 }}%;">
     {{ media.preview_image | image_url: width: 1946 | image_tag:

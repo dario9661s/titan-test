@@ -1,0 +1,48 @@
+body {overflow-x: hidden;}
+#page_preloader__bg {
+    display: flex;
+    background: rgba(0,0,0,.8);
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 2147483647;
+    align-items: center;
+    -webkit-transition: opacity .1s ease-in-out .05s, z-index .1s ease-in-out .05s;
+    -moz-transition: opacity .1s ease-in-out .05s, z-index .1s ease-in-out .05s;
+    transition: opacity .1s ease-in-out .05s, z-index .1s ease-in-out .05s;
+    -webkit-transform: translate3d(0, 0, 0);
+    -ms-transform: translate3d(0, 0, 0);
+    -o-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+}
+#page_preloader__bg .Titan_Svg_Wrap {
+    margin: 0 auto;
+}
+@keyframes draw { to {stroke-dashoffset: 0;} }
+@keyframes fill_svg {to {fill-opacity: 1} }
+@keyframes increaseImg {to {transform: scale(1.2);}}
+@keyframes offAnimation {to {opacity: 0;z-index: -10}}
+#page_preloader__bg svg path {
+    stroke-dashoffset: 300;
+    stroke-dasharray: 300;
+    animation: draw 1s forwards;
+}
+#page_preloader__bg svg g {
+    fill-opacity: 0;
+    animation: fill_svg .5s 1s forwards;
+}
+#page_preloader__bg svg {
+    max-width: 350px;
+    transform: scale(1);
+}
+#page_preloader__bg.off svg {
+    animation: increaseImg .5s forwards;
+}
+#page_preloader__bg.off {
+    animation: offAnimation .5s .5s forwards;
+}
+@media only screen and (max-width: 650px) {
+    #page_preloader__bg svg {max-width: 250px}
+}
